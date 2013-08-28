@@ -1,13 +1,13 @@
 <?php
 // This is a PLUGIN TEMPLATE.
-// Copy this file to a new name like abc_myplugin.php.  Edit the code, then
+// Copy this file to a new name like abc_myplugin.php. Edit the code, then
 // run this file at the command line to produce a plugin for distribution:
 // $ php abc_myplugin.php > abc_myplugin-0.1.txt
 
-// Plugin name is optional.  If unset, it will be extracted from the current
+// Plugin name is optional. If unset, it will be extracted from the current
 // file name. Uncomment and edit this line to override:
 $plugin['name'] = 'rss_admin_db_manager';
-$plugin['version'] = '4.3';
+$plugin['version'] = '4.3.1';
 $plugin['author'] = 'Rob Sable';
 $plugin['author_uri'] = 'http://www.wilshireone.com/';
 $plugin['description'] = 'Database management system.';
@@ -119,12 +119,12 @@ function rss_db_bk($event, $step) {
         pagetop("DB Manager", "BACKUP FAILED: folder is not writable");
       } elseif($error) {
         unlink($backup_path);
-        pagetop("DB Manager", "BACKUP FAILED.  ERROR NO: ".$error);
+        pagetop("DB Manager", "BACKUP FAILED. ERROR NO: ".$error);
       } else if(!is_file($backup_path)) {
-        pagetop("DB Manager", "BACKUP FAILED.  ERROR NO: ".$error);
+        pagetop("DB Manager", "BACKUP FAILED. ERROR NO: ".$error);
       } else if(filesize($backup_path) == 0) {
         unlink($backup_path);
-        pagetop("DB Manager", "BACKUP FAILED.  ERROR NO: ".$error);
+        pagetop("DB Manager", "BACKUP FAILED. ERROR NO: ".$error);
       } else {
         pagetop("DB Manager", "Backed Up: ".$DB->db." to ".$filename);
       }
@@ -191,10 +191,10 @@ function rss_db_bk($event, $step) {
   $sqlv = explode("-", $sqlversion['version']);
   $allownologs = ((float)$sqlv[0] >= (float)"4.1.9") ? tda(gTxt('Include txp_log:'), ' style="text-align:right;vertical-align:middle"').tda(yesnoRadio("rss_dbbk_txplog", $rss_dbbk_txplog), ' style="text-align:left;vertical-align:middle"') : '';
 
-	if (isset($bkdebug) && $bkdebug) echo '<p align="center">'.$bkdebug.'</p>';
+	if (isset($bkdebug) && $bkdebug) echo '<p align="center">'.$bkdebug.'';
 
   echo
-  startTable('list').
+  startTable('list',null,'txp-list').
   form(
   tr(
     tda(gTxt('Lock Tables:'), ' style="text-align:right;vertical-align:middle"').tda(yesnoRadio("rss_dbbk_lock", $rss_dbbk_lock), ' style="text-align:left;vertical-align:middle"').
@@ -211,7 +211,7 @@ function rss_db_bk($event, $step) {
   tr(
     tda(gTxt('mysql Path:'), ' style="text-align:right;vertical-align:middle"').tda(text_input("rss_dbbk_mysql",$rss_dbbk_mysql,'50'), ' colspan="15"'))
   ).endTable().
-  startTable("list").
+  startTable("list",null,'txp-list').
   tr(
     tda(hed('Create a new backup of the '.$DB->db.' database'.br.
     href('.sql file', "index.php?event=rss_db_bk&amp;bk=$DB->db").$gzp,3),' colspan="7" style="text-align:center;"')
@@ -322,7 +322,7 @@ function rss_db_man($event, $step) {
 	endTable().br;
 
 	echo
-	startTable('list').
+	startTable('list',null,'txp-list').
 	tr(
 		hcell("No.").
 		hcell("Tables").
@@ -459,7 +459,7 @@ function rss_sql_run($event, $step) {
               }
 
               $rsd[] =
-              '<div class="scrollWrapper">'.startTable('list', '', 'scrollable').
+              '<div class="scrollWrapper">'.startTable('list', '', 'scrollable txp-list').
               '<thead>'.tr($headers).'</thead><tbody>';
 
               while ($a = mysql_fetch_assoc($run_query)) $out[] = $a;
@@ -494,7 +494,7 @@ function rss_sql_run($event, $step) {
   tr(
     td(
       form(
-        graf("Each query must be on a single line.  You may run multiple queries at once by starting a new line.".br."Supported query types include SELECT, INSERT, UPDATE, CREATE, REPLACE, and DELETE.").
+        graf("Each query must be on a single line. You may run multiple queries at once by starting a new line.".br."Supported query types include SELECT, INSERT, UPDATE, CREATE, REPLACE, and DELETE.").
         graf("WARNING: All SQL run in this window will immediately and permanently change your database.", ' style="font-weight:bold;"').
         text_area('sql_query','200','550',$sql_query2).br.
         fInput('submit','run',gTxt('Run'),'publish').href("Go to Database Manager", "index.php?event=rss_db_man").
@@ -542,62 +542,57 @@ if (0) {
 ?>
 <!--
 # --- BEGIN PLUGIN HELP ---
-<p>
-h1. Textpattern Database Manager</p>
 
-	<p>The rss_admin_db_manager plugin adds 3 new tabs to your Textpattern admin interface.  Each tab contains different functionality to help manage<br />
-your <a href="http://www.mysql.com/">MySQL</a> database.  You can think of this plugin as a lightweight replacement for <a href="http://www.phpmyadmin.net/home_page/">phpMyAdmin</a>.</p>
+h1. Textpattern Database Manager
 
-	<h2>Database Backup</h2>
+The rss_admin_db_manager plugin adds 3 new tabs to your Textpattern admin interface. Each tab contains different functionality to help manage your "MySQL":http://www.mysql.com/. You can think of this plugin as a lightweight replacement for "phpMyAdmin":http://www.phpmyadmin.net/home_page
 
-	<p>The <strong>DB Backup tab</strong> allows you to backup, download and restore the MySQL database that is used for your Textpattern installation.<br />
-The database backups and restores are run using MySQL&#8217;s <a href="http://dev.mysql.com/doc/mysql/en/mysqldump.html">mysqldump</a> command.<br />
-On this tab you are able to:</p>
+h2. Database Backup
 
-	<ul>
-		<li>Create a .sql backup file on windows with the additional option of creating a gzipped backup on *nix operating systems</li>
-		<li>View a list of previous backup files</li>
-		<li>Restore your database from one of the previous backups</li>
-		<li>Download a backup file</li>
-		<li>Delete old backups</li>
-	</ul>
+The *DB Backup tab* allows you to backup, download and restore the MySQL database that is used for your Textpattern installation. The database backups and restores are run using MySQL's "mysqldump"http://dev.mysql.com/doc/mysql/en/mysqldump.html command. On this tab you are able to:
 
-	<h2>Backup Preferences</h2>
+* Create a .sql backup file on windows with the additional option of creating a gzipped backup on *nix operating systems
+* View a list of previous backup files
+* Restore your database from one of the previous backups
+* Download a backup file
+* Delete old backups
 
-	<p>You have the ability to set several preferences related to your database backups.  You can set these options on the backup tab.  The options include:</p>
 
-	<ul>
-		<li><strong>Lock Tables</strong> &#8211; Your host may or may not support this option.  For example, by default, Textdrive doesn&#8217;t allow table locking.  If your backup fails, try setting this to &#8220;No&#8221;.</li>
-		<li><strong>Debug Mode</strong> &#8211; Turning debugging on will echo the command being run to the screen.</li>
-		<li><strong>Backup Path</strong> &#8211; Set the directory that your backups will be saved to.</li>
-		<li><strong>Mysqldump Path</strong> &#8211; Its likely that the default will work for you.  If not, enter the full path the the executable.</li>
-		<li><strong>Mysql Path</strong> &#8211; Its likely that the default will work for you.  If not, enter the full path the the executable.</li>
-	</ul>
+h2. Backup Preferences
 
-	<h2>Database Manager</h2>
+You have the ability to set several preferences related to your database backups. You can set these options on the backup tab. The options include:
 
-	<p>The <strong>DB Manager tab</strong> displays information about your MySQL database and all of its tables.  A detailed list includes the name of the table, number of rows and file space usage.<br />
-You will also be alerted of any overhead or errors that need to be repaired.  Tables can be repaired, dropped or backed up from this listing.</p>
+* *Lock Tables* - Your host may or may not support this option. For example, by default, Textdrive doesn't allow table locking. If your backup fails, try setting this to 'No'.
+* *Debug Mode* - Turning debugging on will echo the command being run to the screen.
+* *Backup Path* - Set the directory that your backups will be saved to.
+* *Mysqldump Path* - Its likely that the default will work for you. If not, enter the full path the the executable.
+* *Mysql Path* - Its likely that the default will work for you. If not, enter the full path the the executable.
 
-	<ul>
-		<li>Clicking on the name of the table will run a select * [table name] <span class="caps">SQL</span> statement and take you to the <strong>Run <span class="caps">SQL</span> tab</strong> to display the results.</li>
-		<li>Repair a single table in the listing by clicking the Repair link.</li>
-		<li>Repair all tables in the listing by clicking the Repair All link.</li>
-		<li>Backup a single table in the listing by clicking the Backup link.</li>
-		<li>Drop a single table in the listing by clicking the Drop link.</li>
-	</ul>
 
-	<h2>Run <span class="caps">SQL</span> Window</h2>
+h2. Database Manager
 
-	<p>The <strong>Run <span class="caps">SQL</span> tab</strong> allows for free form entry and execution of <span class="caps">SQL</span> statements.  The <span class="caps">SQL</span> window accepts<br />
-<span class="caps">SELECT</span>, <span class="caps">INSERT</span>, <span class="caps">UPDATE</span>, <span class="caps">CREATE</span>, <span class="caps">REPLACE</span>, <span class="caps">TRUNCATE</span>, and <span class="caps">DELETE</span> statements.  If a <span class="caps">SELECT</span> statement is run, the results will be displayed to you below the <span class="caps">SQL</span> window in a table.<br />
-The table markup allows you to add your own styles for creating a <a href="http://www.agavegroup.com/?p=31"><span class="caps">CSS</span> Scrollable Table</a>.</p>
+The *DB Manager tab* displays information about your MySQL database and all of its tables. A detailed list includes the name of the table, number of rows and file space usage. You will also be alerted of any overhead or errors that need to be repaired. Tables can be repaired, dropped or backed up from this listing.
 
-	<h2>Major Ransom Contributors</h2>
+* Clicking on the name of the table will run a select * [table name] %(caps)SQL% statement and take you to the *Run %(caps)SQL% tab* to display the results.
+* Repair a single table in the listing by clicking the Repair link.
+* Repair all tables in the listing by clicking the Repair All link.
+* Backup a single table in the listing by clicking the Backup link.
+* Drop a single table in the listing by clicking the Drop link.
 
-	<p><ul>
-		<li>Jan Willem de Bruijn</li>
-		<li>Heikki Yl</li></ul></p>
+
+h2. Run %(caps)SQL% Window
+
+The *Run %(caps)SQL% tab* allows for free form entry and execution of %(caps)SQL% statements. The %(caps)SQL% window accepts %(caps)SELECT%, %(caps)INSERT%, %(caps)UPDATE%, %(caps)CREATE%, %(caps)REPLACE%, %(caps)TRUNCATE%, and %(caps)DELETE% statements. If a %(caps)SELECT% statement is run, the results will be displayed to you below the %(caps)SQL% window in a table. The table markup allows you to add your own styles for creating a "%(caps)CSS% Scrollable Table":http://www.agavegroup.com/?p=31.
+
+h2. Major Ransom Contributors
+
+* Jan Willem de Bruijn
+* Heikki Yl
+
+h2. Other Contributors
+
+* José Manuel Ciges Regueiro _("web":http://www.ciges.net, "email":mailto:jmanuel@ciges.net, "twitter":http://twitter.com/ciges)_: Adaptation to 4.5.4 TextPattern version
+
 # --- END PLUGIN HELP ---
 -->
 <?php

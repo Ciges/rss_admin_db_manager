@@ -2,10 +2,13 @@ h1. rss_admin_db_manager
 
 h2. Description
 
-p. An extended version of Rob Sable's excellent DB management plugin for 
-"Textpattern":http://textpattern.com.
+A fork from Steve (netcarver) "rss_admin_db_manager":https://github.com/netcarver/rss_admin_db_manager which is an extended version of Rob Sable's excellent DB management plugin for "Textpattern":http://textpattern.com.
+
+I have updated the plugin to install it in TextPattern version 4.5.4. The modifications done have been the following:
+* The plugin help is in textile format, so it is correctly shown
+* The list tables (for showing database tables and records) are better integrated in TextPattern Admin theme
 
 h2. Licence
 
-p. This project is released under the "GPLv2 licence":http://www.fsf.org/licensing/licenses/info/GPLv2.html.
+This project is released under the "GPLv2 licence":http://www.fsf.org/licensing/licenses/info/GPLv2.html.
 
